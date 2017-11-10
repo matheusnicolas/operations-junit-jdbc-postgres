@@ -1,101 +1,103 @@
-import static org.junit.jupiter.api.Assertions.*;
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import org.junit.jupiter.api.Test;
 
 class AppTest {
 	
+	private static Connection connection;
+	
+	//CREATE
+	@Test
+	public void createTable() throws Exception {
+		Class.forName("org.postgresql.Driver");
+		Statement cTable;
+		connection = newConnection();
+		cTable = connection.createStatement();		
+		cTable.executeUpdate("CREATE TABLE contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50))");			
+		cTable.executeUpdate("CREATE TABLE desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30), link_audio varchar(50), link_imagem varchar(50))");
+		System.out.println("Database Created");
+	}
+		
 	@Test
 	public void carregarPostgresqlDriver() throws ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 	}
 	
+	//INSERT Contexto
 	@Test
-	public void abrirConexao() throws SQLException {
-		Connection conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+	public void insertWithPreparedStatement() throws Exception {
+		insertContexto(connection, "Esporte", 1, "imgurSport.mp3", "imgursde.png");
+		insertContexto(connection, "Sala de Aula", 2, "imgurClass.mp3", "imgurfe.png");
+		insertContexto(connection, "Cozinha", 3, "imgurKitchen.mp3", "imgghur.png");
+		
+		insertDesafio(connection, 1, 1, "Bola", "mp3", "png");
+		insertDesafio(connection, 1, 2, "Trave", "mp3", "png");
+		insertDesafio(connection, 1, 3, "Grama", "mp3", "png");
+		
+		insertDesafio(connection, 2, 4, "Giz", "mp3", "png");
+		insertDesafio(connection, 2, 5, "Lousa", "mp3", "png");
+		insertDesafio(connection, 2, 6, "Caneta", "mp3", "png");
+		
+		insertDesafio(connection, 3, 7, "Panela", "mp3", "png");
+		insertDesafio(connection, 3, 8, "Copo", "mp3", "png");
+		insertDesafio(connection, 3, 9, "Pia", "mp3", "png");
 	}
 	
+	//READ
 	@Test
-	public void criarTabelas() throws SQLException {
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		statement.executeUpdate("create table contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50))");
-		statement.executeUpdate("CREATE TABLE desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30), link_audio varchar(50), link_imagem varchar(50))");
+	public void readWithPreparedStatement() throws SQLException {
+			connection = newConnection();
+			PreparedStatement readCommandContexto = connection.prepareStatement("SELECT *FROM contexto");
+			PreparedStatement readCommandoDesafio = connection.prepareStatement("SELECT *FROM desafio");
+			ResultSet rs = readCommandContexto.executeQuery();
+			ResultSet rs2 = readCommandoDesafio.executeQuery();
+			listSelectFromContextos(rs);
+			listSelectFromDesafios(rs2);
 	}
 	
-	@Test
-	public void insertTabelas() throws SQLException{
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		statement.executeUpdate("insert into contexto values('cozinha', 1, 'imgur', 'imgur' )");
-		statement.executeUpdate("insert into desafio values(1, 2, 'panela', 'imgur', 'imgur')");
+	//Método responsável por estabelecer conexão com o banco
+	private static Connection newConnection() throws SQLException{
+		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
 	}
 	
-	@Test
-	public void updateTabelas() throws SQLException{
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		statement.executeUpdate("update desafio set palavra = 'mudou' where idDesafio = 1");
+	//Método responsável por salvar no banco de dados os dados dos contextos passados pelo método insertWithPreparedStatement()
+	public void insertContexto(Connection connection, String descricao, int idContexto, String link_audio, String link_imagem) throws SQLException {
+		connection = newConnection();
+		PreparedStatement insert = connection.prepareStatement("INSERT INTO contexto values(?, ?, ?, ?)");
+		insert.setString(1, descricao);
+		insert.setInt(2, idContexto);
+		insert.setString(3, link_audio);
+		insert.setString(4, link_imagem);
+		insert.executeUpdate();
 	}
 	
-	@Test
-	public void deleteTabelas() throws SQLException{
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		statement.executeUpdate("Inserir consulta de deleção");
+	//Método responsável por salvar no banco de dados os dados dos contextos passados pelo método insertWithPreparedStatement()
+	public void insertDesafio(Connection connection, int idContexto, int idDesafio, String palavra, String link_audio, String link_imagem) throws SQLException {
+		connection = newConnection();
+		PreparedStatement insert = connection.prepareStatement("INSERT INTO desafio values(?, ?, ?, ?, ?)");
+		insert.setInt(1, idContexto);
+		insert.setInt(2, idDesafio);
+		insert.setString(3, palavra);
+		insert.setString(4, link_audio);
+		insert.setString(5, link_imagem);
+		insert.executeUpdate();
 	}
 	
-	@Test
-	public void letrabelas() throws SQLException {
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT * FROM contexto");
+	//Métodos responsáveis por listar as consultas informadas acima no método readWithPreparedStatement()
+	private void listSelectFromContextos(ResultSet rs) throws SQLException {
 		while(rs.next()) {
-			System.out.println(rs.getString("descricao") + "/" + rs.getString(2));
+			System.out.println("Resultado da Consulta Tabela Contexto -> " + "Descrição: " + rs.getString("descricao") + ", " + "idContexto: " +rs.getString("idContexto")  + ", " + "link_audio: " + rs.getString("link_audio") + ", " + "link_imagem: " +rs.getString("link_imagem"));
 		}
 	}
 	
-	@Test
-	public void lerTabelasComWhere() throws SQLException {
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		Statement statement = database.createStatement();
-		String query = "c";
-		//ResultSet rs = statement.executeQuery("SELECT * FROM contexto where nome like 'c%'");
-		ResultSet rs = statement.executeQuery("SELECT * FROM contexto where nome like '" + query +" %'");
-		while(rs.next()) {
-			System.out.println(rs.getString("descricao") + "/" + rs.getString(2));
+	private void listSelectFromDesafios(ResultSet rs2) throws SQLException {
+		while(rs2.next()) {
+			System.out.println("Resultado da Consulta Tabela Desafio -> " + "idContexto: " + rs2.getString("contexto") + ", " + "idDesafio: " +rs2.getString("idDesafio")  + ", " + "palavra: " + rs2.getString("palavra") + ", "
+								+ "link_audio: " + rs2.getString("link_audio") + ", " + "link_imagem: " +rs2.getString("link_imagem"));
 		}
 	}
-	
-	@Test
-	public void lerTabelasComPrepareStatement() throws SQLException {
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		String query = "c%";
-		PreparedStatement prepareStatement = database.prepareStatement("SELECT * FROM contexto where nome like ?");
-		prepareStatement.setString(1, query);
-		
-		ResultSet rs = prepareStatement.executeQuery();
-		
-		System.out.println(rs);
-		
-		
-		
-	}
-	/*
-	public void insertTabelasComPrepareStatement() throws SQLException {
-		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
-		PreparedStatement comandoInsert = database.prepareStatement("INSERT INTO contexto VALUES(?, ?)");
-		comandoInsert.setString(parameterIndex, x);
-		
-		System.out.println(rs);*/
-		
-		
-		
 }
