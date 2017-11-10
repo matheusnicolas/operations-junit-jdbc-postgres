@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -33,7 +35,7 @@ class AppTest {
 		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
 		Statement statement = database.createStatement();
 		statement.executeUpdate("insert into contexto values('cozinha', 1, 'imgur', 'imgur' )");
-		statement.executeUpdate("insert into desafio values(2, 1, 'panela', 'imgur', 'imgur')");
+		statement.executeUpdate("insert into desafio values(1, 2, 'panela', 'imgur', 'imgur')");
 	}
 	
 	@Test
@@ -50,7 +52,50 @@ class AppTest {
 		statement.executeUpdate("Inserir consulta de deleção");
 	}
 	
+	@Test
+	public void letrabelas() throws SQLException {
+		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+		Statement statement = database.createStatement();
+		ResultSet rs = statement.executeQuery("SELECT * FROM contexto");
+		while(rs.next()) {
+			System.out.println(rs.getString("descricao") + "/" + rs.getString(2));
+		}
+	}
 	
+	@Test
+	public void lerTabelasComWhere() throws SQLException {
+		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+		Statement statement = database.createStatement();
+		String query = "c";
+		//ResultSet rs = statement.executeQuery("SELECT * FROM contexto where nome like 'c%'");
+		ResultSet rs = statement.executeQuery("SELECT * FROM contexto where nome like '" + query +" %'");
+		while(rs.next()) {
+			System.out.println(rs.getString("descricao") + "/" + rs.getString(2));
+		}
+	}
 	
-
+	@Test
+	public void lerTabelasComPrepareStatement() throws SQLException {
+		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+		String query = "c%";
+		PreparedStatement prepareStatement = database.prepareStatement("SELECT * FROM contexto where nome like ?");
+		prepareStatement.setString(1, query);
+		
+		ResultSet rs = prepareStatement.executeQuery();
+		
+		System.out.println(rs);
+		
+		
+		
+	}
+	/*
+	public void insertTabelasComPrepareStatement() throws SQLException {
+		Connection database = DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+		PreparedStatement comandoInsert = database.prepareStatement("INSERT INTO contexto VALUES(?, ?)");
+		comandoInsert.setString(parameterIndex, x);
+		
+		System.out.println(rs);*/
+		
+		
+		
 }
