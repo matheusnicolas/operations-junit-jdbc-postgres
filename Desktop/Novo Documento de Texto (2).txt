@@ -1,8 +1,0 @@
-CREATE TABLE contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50)) CREATE TABLE desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30),"
-				+ " link_audio varchar(50), link_imagem varchar(50)))
-
-
-
-System.out.println("Linhas afetadas: " + affectedLines);
-
-CREATE TABLE contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50) CREATE TABLE desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30), link_audio varchar(50), link_imagem varchar(50)
