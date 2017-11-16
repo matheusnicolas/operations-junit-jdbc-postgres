@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 class AppTest {
 	
-
 	private static Connection connection;
 	
 	//CREATE
@@ -26,6 +25,12 @@ class AppTest {
 	@Test
 	public void carregarPostgresqlDriver() throws ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
+	}
+	
+	//Método responsável por estabelecer conexão com o banco
+	@Test
+	private static Connection newConnection() throws SQLException{
+		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
 	}
 	
 	//INSERT Contexto
@@ -60,9 +65,22 @@ class AppTest {
 			listSelectFromDesafios(rs2);
 	}
 	
-	//Método responsável por estabelecer conexão com o banco
-	private static Connection newConnection() throws SQLException{
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+	
+	
+	//UPDATE
+	@Test
+	public void updateTable() throws SQLException{
+		connection = newConnection();
+		PreparedStatement insert = connection.prepareStatement("UPDATE Contexto set descricao = 'Tangamandapio' WHERE idContexto = 2 ");
+		insert.executeUpdate();
+	}
+	
+	//DELETE
+	@Test
+	public void deleteTable() throws SQLException{
+		connection = newConnection();
+		PreparedStatement insert = connection.prepareStatement("DELETE from Desafio WHERE idDesafio = 9");
+		insert.executeUpdate();
 	}
 	
 	//Método responsável por salvar no banco de dados os dados dos contextos passados pelo método insertWithPreparedStatement()
