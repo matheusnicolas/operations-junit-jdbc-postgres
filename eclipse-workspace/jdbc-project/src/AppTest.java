@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class AppTest {
 	
+
 	private static Connection connection;
 	
 	//CREATE
