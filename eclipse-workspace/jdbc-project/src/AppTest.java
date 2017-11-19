@@ -1,10 +1,11 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.junit.jupiter.api.Test;
+
+import connection.ConnectionFactory;
 
 class AppTest {
 	
@@ -17,8 +18,8 @@ class AppTest {
 		Statement cTable;
 		connection = newConnection();
 		cTable = connection.createStatement();		
-		cTable.executeUpdate("CREATE TABLE contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50))");			
-		cTable.executeUpdate("CREATE TABLE desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30), link_audio varchar(50), link_imagem varchar(50))");
+		cTable.executeUpdate("CREATE TABLE Contexto (descricao varchar(30), idContexto int primary key, link_audio varchar(50), link_imagem varchar(50))");			
+		cTable.executeUpdate("CREATE TABLE Desafio (contexto int references contexto(idContexto), idDesafio int primary key, palavra varchar(30), link_audio varchar(50), link_imagem varchar(50))");
 		System.out.println("Database Created");
 	}
 		
@@ -30,7 +31,8 @@ class AppTest {
 	//Método responsável por estabelecer conexão com o banco
 	@Test
 	private static Connection newConnection() throws SQLException{
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/projeto_jdbc", "postgres", "war123");
+		Connection connection = new ConnectionFactory().getConnection();
+		return connection;
 	}
 	
 	//INSERT Contexto
@@ -86,7 +88,7 @@ class AppTest {
 	//Método responsável por salvar no banco de dados os dados dos contextos passados pelo método insertWithPreparedStatement()
 	public void insertContexto(Connection connection, String descricao, int idContexto, String link_audio, String link_imagem) throws SQLException {
 		connection = newConnection();
-		PreparedStatement insert = connection.prepareStatement("INSERT INTO contexto values(?, ?, ?, ?)");
+		PreparedStatement insert = connection.prepareStatement("INSERT INTO Contexto values(?, ?, ?, ?)");
 		insert.setString(1, descricao);
 		insert.setInt(2, idContexto);
 		insert.setString(3, link_audio);
@@ -97,7 +99,7 @@ class AppTest {
 	//Método responsável por salvar no banco de dados os dados dos contextos passados pelo método insertWithPreparedStatement()
 	public void insertDesafio(Connection connection, int idContexto, int idDesafio, String palavra, String link_audio, String link_imagem) throws SQLException {
 		connection = newConnection();
-		PreparedStatement insert = connection.prepareStatement("INSERT INTO desafio values(?, ?, ?, ?, ?)");
+		PreparedStatement insert = connection.prepareStatement("INSERT INTO Desafio values(?, ?, ?, ?, ?)");
 		insert.setInt(1, idContexto);
 		insert.setInt(2, idDesafio);
 		insert.setString(3, palavra);
