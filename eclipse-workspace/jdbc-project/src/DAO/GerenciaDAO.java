@@ -8,40 +8,41 @@ import java.sql.SQLException;
 
 public class GerenciaDAO {
 
-	private Connection connection;
+	protected Connection connection;
 	
 	public GerenciaDAO() {
 		this.connection = new ConnectionFactory().getConnection();
+		
 	}
 	//#############ADD CONTEXTO###############
 	public void addContexto(Contexto contexto) {
-		String sql = "INSERT INTO Contexto " + "(descricao, id_contexto, audio_link, imagem_link)" + "values(?, ?, ?, ?)";		
+		String sql = "INSERT INTO Contexto (descricao, id_contexto, link_audio, link_imagem) values(?, ?, ?, ?)";		
 	
 		try {
 			PreparedStatement insert = connection.prepareStatement(sql);
-			
 			insert.setString(1, contexto.getDescricao());
 			insert.setInt(2, contexto.getId_contexto());
 			insert.setString(3, contexto.getAudio_link());
 			insert.setString(4, contexto.getImagem_link());
-			insert.execute();
+			insert.executeUpdate();
 			
 		}catch(SQLException e) {
 			e.getMessage();
 		}
 	}
+	
 	//#############UPDATE CONTEXTO###############
-	public void alterContexto(Contexto contexto) {
-		String sql = "UPDATE Contexto SET descricao=?, audio_link=?, imagem_link=? where id_contexto=?";
+	public void updateContexto(Contexto contexto) {
+		String sql = "UPDATE Contexto SET descricao=?, link_audio=?, link_imagem=? where id_contexto=?";
 		
 		try {
 			PreparedStatement update = connection.prepareStatement(sql);
 			
-			update.setString(1, contexto.getDescricao());
-			update.setInt(2, contexto.getId_contexto());
-			update.setString(3, contexto.getAudio_link());
-			update.setString(4, contexto.getImagem_link());
-			update.execute();
+			update.setString(1, contexto.getDescricao());			
+			update.setString(2, contexto.getAudio_link());
+			update.setString(3, contexto.getImagem_link());
+			update.setInt(4, contexto.getId_contexto());
+			update.executeUpdate();
 			
 		}catch(SQLException e) {
 			e.getMessage();
@@ -50,11 +51,11 @@ public class GerenciaDAO {
 	
 	//#############DELETE CONTEXTO###############
 	public void deleteContexto(Contexto contexto) {
-		String sql = "DELETE FROM Contexto WHERE id_contexto = 3";
+		String sql = "DELETE FROM Contexto WHERE id_contexto=?";
 		try {
 			PreparedStatement delete = connection.prepareStatement(sql);
 			delete.setInt(1, contexto.getId_contexto());
-			delete.execute();
+			delete.executeUpdate();
 			
 		}catch(SQLException e) {
 			e.getMessage();
@@ -63,7 +64,7 @@ public class GerenciaDAO {
 	
 	//#############ADD DESAFIO###############
 	public void addDesafio(Desafio desafio) {
-		String sql = "INSERT INTO Contexto" + "(contexto, id_desafio, palavra, audio_link, imagem_link)" + "values(?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Desafio (contexto, id_desafio, palavra, link_audio, link_imagem) values(?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement insert = connection.prepareStatement(sql);
 			insert.setInt(1, desafio.getContexto());
@@ -71,7 +72,7 @@ public class GerenciaDAO {
 			insert.setString(3, desafio.getPalavra());
 			insert.setString(4, desafio.getAudio_link());
 			insert.setString(5, desafio.getImagem_link());
-			insert.execute();
+			insert.executeUpdate();
 			
 		}catch(SQLException e) {
 			e.getMessage();
@@ -79,8 +80,8 @@ public class GerenciaDAO {
 	}
 	
 	//#############UPDATE DESAFIO###############
-	public void alterDesafio(Desafio desafio) {
-		String sql = "UPDATE Desafio SET palavra=?, audio_link=?, imagem_link=? where id_desafio=?";
+	public void updateDesafio(Desafio desafio) {
+		String sql = "UPDATE Desafio SET palavra=?, link_audio=?, link_imagem=? where id_desafio=?";
 		
 		try {
 			PreparedStatement update = connection.prepareStatement(sql);
@@ -89,7 +90,7 @@ public class GerenciaDAO {
 			update.setString(2, desafio.getAudio_link());
 			update.setString(3, desafio.getImagem_link());
 			update.setInt(4, desafio.getId_desafio());
-			update.execute();
+			update.executeUpdate();
 			
 		}catch(SQLException e) {
 			e.getMessage();
@@ -98,18 +99,15 @@ public class GerenciaDAO {
 	
 	//#############DELETE DESAFIO###############
 		public void deleteDesafio(Desafio desafio) {
-			String sql = "DELETE FROM Desafio WHERE id_desafio = 3";
+			String sql = "DELETE FROM Desafio WHERE id_desafio=? ";
 			try {
 				PreparedStatement delete = connection.prepareStatement(sql);
 				delete.setInt(1, desafio.getId_desafio());
-				delete.execute();
+				delete.executeUpdate();
 				
 			}catch(SQLException e) {
 				e.getMessage();
 			}
 		}
-	
-	
-	
-	
 }
+	

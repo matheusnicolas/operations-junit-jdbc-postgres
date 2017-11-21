@@ -8,6 +8,14 @@ public class Desafio {
 	private String audio_link;
 	private String imagem_link;
 	
+	public Desafio(Integer contexto, Integer id_desafio, String palavra, String audio_link, String imagem_link) {
+		this.contexto = contexto;
+		this.id_desafio = id_desafio;
+		this.palavra = palavra;
+		this.audio_link = audio_link;
+		this.imagem_link = imagem_link;
+	}
+	
 	public Integer getContexto() {
 		return this.contexto;
 	}

@@ -7,30 +7,44 @@ public class Contexto {
 	private String audio_link;
 	private String imagem_link;
 	
+	public Contexto(String descricao, Integer id_contexto, String audio_link, String imagem_link) {
+		this.descricao = descricao;
+		this.id_contexto = id_contexto;
+		this.audio_link = audio_link;
+		this.imagem_link = imagem_link;
+	}
+	
 	public String getDescricao() {
 		return this.descricao;
 	}
+	
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+	
 	public Integer getId_contexto() {
 		return this.id_contexto;
 	}
+	
 	public void setId_contexto(Integer id_contexto) {
 		this.id_contexto = id_contexto;
 	}
+	
 	public String getAudio_link() {
 		return this.audio_link;
 	}
+	
 	public void setAudio_link(String audio_link) {
 		this.audio_link = audio_link;
 	}
+	
 	public String getImagem_link() {
 		return this.imagem_link;
 	}
+	
 	public void setImagem_link(String imagem_link) {
 		this.imagem_link = imagem_link;
-	}
+	}	
 	
 	
 }
